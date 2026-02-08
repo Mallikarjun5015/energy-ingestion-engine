@@ -100,6 +100,8 @@ This approach prevents expensive scans on large historical tables when querying
 current device state.
 
 ## Analytics Design
+For simplicity, vehicleId is assumed to have a 1:1 mapping with meterId for analytics correlation.
+
 ### Endpoint
 GET /v1/analytics/performance/{vehicleId}
 
