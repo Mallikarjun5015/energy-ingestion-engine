@@ -146,6 +146,7 @@ To run the service using Docker:
 mvn clean package -DskipTests
 docker-compose down
 docker-compose up --build
+```
 
 ## Endpoint
 
