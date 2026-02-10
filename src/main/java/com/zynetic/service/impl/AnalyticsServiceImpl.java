@@ -1,11 +1,16 @@
 package com.zynetic.service.impl;
 
 import com.zynetic.dto.VehiclePerformanceResponse;
+import com.zynetic.entity.VehicleMeterMapping;
 import com.zynetic.repository.MeterTelemetryHistoryRepository;
+import com.zynetic.repository.VehicleMeterMappingRepository;
 import com.zynetic.repository.VehicleTelemetryHistoryRepository;
 import com.zynetic.service.AnalyticsService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -13,20 +18,34 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     private final VehicleTelemetryHistoryRepository vehicleRepo;
     private final MeterTelemetryHistoryRepository meterRepo;
+    private final VehicleMeterMappingRepository mappingRepo;
 
     @Override
     public VehiclePerformanceResponse getVehiclePerformance(String vehicleId) {
 
-        Object[] dcStats = vehicleRepo.getDcStatsLast24Hours(vehicleId);
-        Double totalDc = dcStats != null && dcStats[0] != null ? ((Number) dcStats[0]).doubleValue() : 0.0;
-        Double avgTemp = dcStats != null && dcStats[1] != null ? ((Number) dcStats[1]).doubleValue() : 0.0;
+        VehicleMeterMapping mapping = mappingRepo.findById(vehicleId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST,
+                                "Vehicle not mapped to any meter"
+                        ));
 
-        Double totalAc = meterRepo.getAcConsumedLast24Hours(vehicleId);
-        if (totalAc == null) {
-            totalAc = 0.0;
+        String meterId = mapping.getMeterId();
+
+        Object[] dcStats = vehicleRepo.getDcStatsLast24Hours(vehicleId);
+
+        double totalDc = 0.0;
+        double avgTemp = 0.0;
+
+        if (dcStats != null && dcStats.length == 2) {
+            if (dcStats[0] != null) totalDc = ((Number) dcStats[0]).doubleValue();
+            if (dcStats[1] != null) avgTemp = ((Number) dcStats[1]).doubleValue();
         }
 
-        Double efficiency = (totalAc > 0) ? (totalDc / totalAc) : 0.0;
+        Double acVal = meterRepo.getAcConsumedLast24Hours(meterId);
+        double totalAc = acVal != null ? acVal : 0.0;
+
+        double efficiency = totalAc > 0 ? totalDc / totalAc : 0.0;
 
         return new VehiclePerformanceResponse(
                 vehicleId,
@@ -35,5 +54,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 efficiency,
                 avgTemp
         );
+    
     }
 }

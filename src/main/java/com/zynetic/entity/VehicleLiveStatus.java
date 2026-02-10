@@ -20,7 +20,8 @@ public class VehicleLiveStatus {
 
     private Double lastKwhDeliveredDc;
 
-    private Double avgBatteryTemp;
+    @Column(name = "last_battery_temp")
+    private Double lastBatteryTemp;
 
     @Column(nullable = false)
     private LocalDateTime lastUpdatedAt;

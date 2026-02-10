@@ -6,15 +6,14 @@ import org.springframework.data.repository.query.Param;
 
 import com.zynetic.entity.MeterTelemetryHistory;
 
-public interface MeterTelemetryHistoryRepository extends JpaRepository<MeterTelemetryHistory, Long>{
+public interface MeterTelemetryHistoryRepository extends JpaRepository<MeterTelemetryHistory, Long> {
 
 	@Query(value = """
-		    SELECT 
-		        SUM(m.kwh_consumed_ac)
-		    FROM meter_telemetry_history m
-		    WHERE m.meter_id = :vehicleId
-		      AND m.recorded_at >= NOW() - INTERVAL 24 HOUR
-		    """, nativeQuery = true)
-		Double getAcConsumedLast24Hours(@Param("vehicleId") String vehicleId);
-
+			SELECT
+			    (MAX(m.kwh_consumed_ac) - MIN(m.kwh_consumed_ac))
+			FROM meter_telemetry_history m
+			WHERE m.meter_id = :meterId
+			  AND m.recorded_at >= NOW() - INTERVAL 24 HOUR
+			""", nativeQuery = true)
+	Double getAcConsumedLast24Hours(@Param("meterId") String meterId);
 }

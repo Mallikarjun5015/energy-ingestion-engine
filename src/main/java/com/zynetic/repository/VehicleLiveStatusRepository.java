@@ -13,12 +13,12 @@ public interface VehicleLiveStatusRepository  extends JpaRepository<VehicleLiveS
     @Modifying
     @Query(value = """
         INSERT INTO vehicle_live_status
-        (vehicle_id, current_soc, last_kwh_delivered_dc, avg_battery_temp, last_updated_at)
+        (vehicle_id, current_soc, last_kwh_delivered_dc, last_battery_temp, last_updated_at)
         VALUES (:vehicleId, :soc, :kwh, :temp, :updatedAt)
         ON DUPLICATE KEY UPDATE
         current_soc = VALUES(current_soc),
         last_kwh_delivered_dc = VALUES(last_kwh_delivered_dc),
-        avg_battery_temp = VALUES(avg_battery_temp),
+        last_battery_temp = VALUES(last_battery_temp),
         last_updated_at = VALUES(last_updated_at)
         """, nativeQuery = true)
     void upsert(String vehicleId, Integer soc, Double kwh,

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MeterLiveStatus {
 
+	@Column(name = "meter_id", unique = true)
     @Id
     private String meterId;
 
