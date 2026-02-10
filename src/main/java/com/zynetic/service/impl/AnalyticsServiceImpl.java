@@ -6,14 +6,17 @@ import com.zynetic.repository.MeterTelemetryHistoryRepository;
 import com.zynetic.repository.VehicleMeterMappingRepository;
 import com.zynetic.repository.VehicleTelemetryHistoryRepository;
 import com.zynetic.service.AnalyticsService;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AnalyticsServiceImpl implements AnalyticsService {
 
     private final VehicleTelemetryHistoryRepository vehicleRepo;
@@ -32,14 +35,20 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
         String meterId = mapping.getMeterId();
 
-        Object[] dcStats = vehicleRepo.getDcStatsLast24Hours(vehicleId);
+        Object[] result = vehicleRepo.getDcStatsLast24Hours(vehicleId);
 
         double totalDc = 0.0;
         double avgTemp = 0.0;
 
-        if (dcStats != null && dcStats.length == 2) {
-            if (dcStats[0] != null) totalDc = ((Number) dcStats[0]).doubleValue();
-            if (dcStats[1] != null) avgTemp = ((Number) dcStats[1]).doubleValue();
+        if (result != null && result.length > 0 && result[0] instanceof Object[]) {
+            Object[] row = (Object[]) result[0];
+
+            if (row[0] != null) {
+                totalDc = ((Number) row[0]).doubleValue();
+            }
+            if (row[1] != null) {
+                avgTemp = ((Number) row[1]).doubleValue();
+            }
         }
 
         Double acVal = meterRepo.getAcConsumedLast24Hours(meterId);
@@ -54,6 +63,5 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 efficiency,
                 avgTemp
         );
-    
     }
 }

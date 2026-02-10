@@ -5,10 +5,12 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "vehicle_telemetry_history",
-       indexes = {
-           @Index(name = "idx_vehicle_time", columnList = "vehicleId, recordedAt")
-       })
+@Table(
+    name = "vehicle_telemetry_history",
+    indexes = {
+        @Index(name = "idx_vehicle_time", columnList = "vehicle_id, recorded_at")
+    }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,18 +21,18 @@ public class VehicleTelemetryHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "vehicle_id", nullable = false)
     private String vehicleId;
 
     @Column(nullable = false)
     private Integer soc;
 
-    @Column(nullable = false)
+    @Column(name = "kwh_delivered_dc", nullable = false)
     private Double kwhDeliveredDc;
 
+    @Column(name = "battery_temp")
     private Double batteryTemp;
 
-    @Column(nullable = false)
+    @Column(name = "recorded_at", nullable = false)
     private LocalDateTime recordedAt;
 }
-
