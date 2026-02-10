@@ -1,3 +1,5 @@
+# Energy Ingestion Engine – High-Scale EV Fleet Analytics
+
 ## Overview of this:
 This service implements the core ingestion and analytics layer for a high-scale EV
 fleet platform. The system is designed to ingest real-time telemetry from thousands
