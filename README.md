@@ -124,10 +124,40 @@ GET /v1/analytics/performance/{vehicleId}
 - Indexed time-series queries for analytics
 - Stateless service design allows horizontal scaling
 
+### Metrics (Last 24 Hours)
+- Total **AC energy consumed**
+- Total **DC energy delivered**
+- **Efficiency ratio** (DC / AC)
+- **Average battery temperature**
+
+---
+
 ## Technology Stack
 - Backend: Spring Boot (Java)
 - Database: PostgreSQL / MySQL
 - ORM: JPA / Hibernate
 - Containerization: Docker & Docker Compose
 
-### Endpoint
+## Running the Application (Docker)
+
+To run the service using Docker:
+
+```bash
+mvn clean package -DskipTests
+docker-compose down
+docker-compose up --build
+```
+
+## Endpoint
+
+---
+
+## Author
+
+**Mallikarjun Jamadar**  
+Backend Developer | Java | Spring Boot  
+
+- GitHub: https://github.com/Mallikarjun5015  
+- Tech Stack: Java, Spring Boot, JPA/Hibernate, MySQL, Docker  
+- Interests: Scalable backend systems, data ingestion pipelines, analytics systems
+
